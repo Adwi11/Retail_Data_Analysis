@@ -1,0 +1,66 @@
+#Name:Adwitiya Retail dataset analysis                                                                                                                          
+import pandas as pd                                                                                                                                             
+import numpy as np                                                                                                                                              
+import matplotlib.pyplot as plt                                                                                                                                 
+import seaborn as sb                                                                                                                                            
+from sklearn.datasets import fetch_species_distributions                                                                                                        
+import warnings                                                                                                                                                 
+#to ignore the warnings                                                                                                                                         
+warnings.simplefilter(action='ignore', category=FutureWarning)                                                                                                  
+                                                                                                                                                                
+df=pd.read_csv("C:\\Users\\Adwit\\Desktop\\TSF_Internship\\Retail\\SampleSuperstore.csv")                                                                       
+                                                                                                                                                                
+#we drop the postal code column since it does not contain relevant information                                                                                  
+df=df.drop("Postal Code",axis=1)                                                                                                                                
+                                                                                                                                                                
+print(df.describe())                                                                                                                                            
+print(df.info())                                                                                                                                                
+# some major outliers in sales and profit as we compare 75% and max                                                                                             
+                                                                                                                                                                
+                                                                                                                                                                
+print(df.Profit.value_counts())                                                                                                                                 
+#zero=df.Profit.value_counts()                                                                                                                                  
+values_list=[0]                                                                                                                                                 
+print(df[df.Profit.isin(values_list)] )                                                                                                                         
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+#good to find corealted variables since later when making models we can exculde them                                                                            
+corr=df.corr()                                                                                                                                                  
+sb.heatmap(corr,center=0,cmap="YlGnBu",annot=True)                                                                                                              
+plt.show()                                                                                                                                                      
+                                                                                                                                                                
+#Bivariate graphs to show cross every variable with every other                                                                                                 
+sb.pairplot(df)                                                                                                                                                 
+plt.show()                                                                                                                                                      
+                                                                                                                                                                
+                                                                                                                                                                
+sb.relplot(x='Profit',y='Sales',data=df,hue='Sub-Category',col='Category')                                                                                      
+plt.show()                                                                                                                                                      
+                                                                                                                                                                
+sb.relplot(x='Profit',y='Quantity',data=df,hue='Sub-Category',col='Category')                                                                                   
+plt.show()                                                                                                                                                      
+                                                                                                                                                                
+#from the above graph we can conclude to increase the prices of the furniture to shift the profit towards the positive side                                     
+                                                                                                                                                                
+sb.relplot(x='Quantity',y='Sales',data=df,hue='Sub-Category',col='Category')                                                                                    
+plt.show()                                                                                                                                                      
+#increasing the cost of machines and chairs will also bring in more profit since the graph shows they are bought at all quantity evenly so it is a necessity    
+                                                                                                                                                                
+#plots a univariate distribution of observations                                                                                                                
+sb.distplot(df["Sales"],hist=True,)                                                                                                                             
+plt.show()                                                                                                                                                      
+                                                                                                                                                                
+fd=df.groupby("City").sum().nlargest(10,"Quantity")                                                                                                             
+                                                                                                                                                                
+                                                                                                                                                                
+print(fd)                                                                                                                                                       
+#cities=fd["City"].unique()                                                                                                                                     
+cities=fd.index.tolist()                                                                                                                                        
+                                                                                                                                                                
+g=sb.barplot(y=fd['Profit'],x=cities,)                                                                                                                          
+plt.xticks(rotation=45)                                                                                                                                         
+plt.title("Highest sales & quanity")                                                                                                                            
+plt.show()                                                                                                                                                      
+                                                                                                                                                                
+#According to the bar plot we can conclude that we should reduce our discound in Philadelphia, Houston and  Chicago to increase our profit                      
